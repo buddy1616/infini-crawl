@@ -2873,14 +2873,15 @@
 				weight: 10,
 				minScene: 0,
 				toolTip: function(item) {
-					return '<p>Heals wounds and grants invincibility for a ' + item.level + ' attack' + s(item.level) + '.</p>';
+					var dur = getUbertrankDuration(item.level);
+					return '<p>Heals wounds and grants invincibility for ' + dur + ' attack' + s(dur) + '.</p>';
 				},
 				use: function(item) {
 					decreaseWounds(10 + Math.ceil((health + waterBonus) / 2));
 					logEvent('<p>You drank an ubertrank. You feel invincible.</p>', 0);
 					incAchievement('uberDrink', true);
 					playSound(sfxDrink1);
-					invincibility += (1 + Math.floor(item.level / 2)) + Math.ceil(waterBonus / 10);
+					invincibility += getUbertrankDuration(item.level);
 					return true;
 				}
 			},
@@ -3870,6 +3871,7 @@
 		var freezing;
 		var paralyzed;
 		var burned;
+		var isRetired;
 
 		var startScene;
 
@@ -4939,6 +4941,7 @@
 					packTab: 'w',
 					gearTab: 'e',
 					areaTab: 'r',
+					shopTab: 't',
 					infoButton: '?',
 					reloadButtonNewest: '<',
 					reloadButtonOldest: '>',
@@ -4960,6 +4963,7 @@
 				if (keys.hasOwnProperty('packTab')) { r.packTab = keys.packTab; }
 				if (keys.hasOwnProperty('gearTab')) { r.gearTab = keys.gearTab; }
 				if (keys.hasOwnProperty('areaTab')) { r.areaTab = keys.areaTab; }
+				if (keys.hasOwnProperty('shopTab')) { r.shopTab = keys.shopTab; }
 				if (keys.hasOwnProperty('infoButton')) { r.infoButton = keys.infoButton; }
 				if (keys.hasOwnProperty('reloadButtonNewest')) { r.reloadButtonNewest = keys.reloadButtonNewest; }
 				if (keys.hasOwnProperty('reloadButtonOldest')) { r.reloadButtonOldest = keys.reloadButtonOldest; }
@@ -5649,6 +5653,14 @@
 			
 			r.health += Math.ceil((r.health * retirementData.numberRetires * 5) / 100);
 			r.strength += Math.ceil((r.strength * retirementData.numberRetires * 2) / 100);
+			
+			var scenesThisRun = scene.number - startScene;
+			if (scenesThisRun > 150)
+			{
+				var sceneMod = (scenesThisRun - 150) / 100;
+				r.health += Math.ceil(r.health * sceneMod * 1.5);
+				r.strength += Math.ceil(r.health * sceneMod);
+			}
 
 			r.maxHealth = r.health;
 
@@ -6041,6 +6053,8 @@
 			freezing = 0;
 			paralyzed = 0;
 			burned = 0;
+			
+			isRetired = false;
 
 			backpack.innerHTML = '';
 			shop.innerHTML = '';
@@ -6068,10 +6082,10 @@
 			removeTab(packTab);
 			removeTab(gearTab);
 			removeTab(areaTab);
+			removeTab(shopTab);
 			removeTab(achievementTab);
 			removeTab(bestiaryTab);
 			removeTab(retirementTab);
-			removeTab(shopTab);
 			removeTab(petTab);
 			clearAreaTab();
 			updateAchievementTab();
@@ -6221,6 +6235,7 @@
 			eventTab.setAttribute('accesskey', settings.accessKeys.eventTab);
 			gearTab.setAttribute('accesskey', settings.accessKeys.gearTab);
 			areaTab.setAttribute('accesskey', settings.accessKeys.areaTab);
+			shopTab.setAttribute('accesskey', settings.accessKeys.shopTab);
 			secretInfoButton.setAttribute('accesskey', settings.accessKeys.infoButton);
 			reloadButtonNewest.setAttribute('accesskey', settings.accessKeys.reloadButtonNewest);
 			reloadButtonOldest.setAttribute('accesskey', settings.accessKeys.reloadButtonOldest);
@@ -6324,8 +6339,7 @@
 		}
 		function retire()
 		{
-			exploreButton.disabled = true;
-			secretExploreButton.disabled = true;
+			isRetired = true;
 
 			addTab(retirementTab);
 			
@@ -6382,6 +6396,7 @@
 			retireUnlockList.innerHTML += '<br />cumulative 5% bonus to experience gained';
 			
 			logEvent('<p>' + e.join('</p><p>') + '</p>', 1);
+			refreshScene();
 		}
 		function confirmRetire()
 		{
@@ -7538,6 +7553,7 @@
 			settingDefaultBoxPackTab.innerHTML = accKeyDefSet.packTab;
 			settingDefaultBoxGearTab.innerHTML = accKeyDefSet.gearTab;
 			settingDefaultBoxAreaTab.innerHTML = accKeyDefSet.areaTab;
+			settingDefaultBoxShopTab.innerHTML = accKeyDefSet.shopTab;
 			settingDefaultBoxInfoButton.innerHTML = accKeyDefSet.infoButton;
 			settingDefaultBoxReloadButtonNewest.innerHTML = accKeyDefSet.reloadButtonNewest;
 			settingDefaultBoxReloadButtonOldest.innerHTML = accKeyDefSet.reloadButtonOldest;
@@ -7557,6 +7573,7 @@
 			settingBoxPackTab.value = settings.accessKeys.packTab;
 			settingBoxGearTab.value = settings.accessKeys.gearTab;
 			settingBoxAreaTab.value = settings.accessKeys.areaTab;
+			settingBoxShopTab.value = settings.accessKeys.shopTab;
 			settingBoxInfoButton.value = settings.accessKeys.infoButton;
 			settingBoxReloadButtonNewest.value = settings.accessKeys.reloadButtonNewest;
 			settingBoxReloadButtonOldest.value = settings.accessKeys.reloadButtonOldest;
@@ -7626,10 +7643,10 @@
 					secretCondenseButton.disabled = true;
 				}
 				setGameBoxLayout('shop');
+				shop.display = '';
+				shopButtons.display = '';
 				getMerchantInventory(itemLevel);
 				selectTab(shopTab);
-				shopTab.setAttribute('accesskey', 'w');
-				eventTab.setAttribute('accesskey', '');
 				refreshScene();
 				return true;
 			}
@@ -7641,11 +7658,11 @@
 			{
 				setGameBoxLayout('explore');
 				selectTab(eventTab);
-				shopTab.setAttribute('accesskey', '');
-				eventTab.setAttribute('accesskey', 'w');
 				shopTabContent.style.display = 'none';
 				logEvent('<p>' + getRandomArrayValue(merchantExits) + '</p>', 0);
 				removeTab(shopTab);
+				shop.display = 'none';
+				shopButtons.display = 'none';
 				refreshScene();
 				return true;
 			}
@@ -8687,6 +8704,10 @@
 			return Math.max((l * 2) + level + fireBonus,
 							rint(Math.ceil(scene.enemy.maxHealth * (Math.min(75,
 																			(l * 2) + fireBonus) / 100))));
+		}
+		function getUbertrankDuration(l)
+		{
+			return (Math.floor(Math.sqrt(l))) + Math.ceil(waterBonus / 10);
 		}
 
 		//zoneEffect calculators
@@ -9772,8 +9793,17 @@
 				secretFightButton.disabled = true;
 				runButton.disabled = true;
 				secretRunButton.disabled = true;
-				exploreButton.disabled = false;
-				secretExploreButton.disabled = false;
+				if ((gameBox.getAttribute('data-layout') == 'explore')
+					&& (!isRetired))
+				{
+					exploreButton.disabled = false;
+					secretExploreButton.disabled = false;
+				}
+				else
+				{
+					exploreButton.disabled = true;
+					secretExploreButton.disabled = true;
+				}
 				if ((fatigue > 0) && (food > 0))
 				{
 					restButton.disabled = false;
@@ -10414,6 +10444,7 @@
 								<tr><td>Pack Tab:</td><td id="settingDefaultBoxPackTab"></td><td><input type="text" id="settingBoxPackTab" class="accessKeySettingBox" maxlength="1" /></td></tr>
 								<tr><td>Gear Tab:</td><td id="settingDefaultBoxGearTab"></td><td><input type="text" id="settingBoxGearTab" class="accessKeySettingBox" maxlength="1" /></td></tr>
 								<tr><td>Area Tab:</td><td id="settingDefaultBoxAreaTab"></td><td><input type="text" id="settingBoxAreaTab" class="accessKeySettingBox" maxlength="1" /></td></tr>
+								<tr><td>Shop Tab:</td><td id="settingDefaultBoxShopTab"></td><td><input type="text" id="settingBoxShopTab" class="accessKeySettingBox" maxlength="1" /></td></tr>
 								<tr><td>Inspect Mode:</td><td id="settingDefaultBoxInfoButton"></td><td><input type="text" id="settingBoxInfoButton" class="accessKeySettingBox" maxlength="1" /></td></tr>
 								<tr><td>Reload Events,<br />Newest First:</td><td id="settingDefaultBoxReloadButtonNewest"></td><td><input type="text" id="settingBoxReloadButtonNewest" class="accessKeySettingBox" maxlength="1" /></td></tr>
 								<tr><td>Reload Events,<br />Oldest First:</td><td id="settingDefaultBoxReloadButtonOldest"></td><td><input type="text" id="settingBoxReloadButtonOldest" class="accessKeySettingBox" maxlength="1" /></td></tr>
