@@ -937,7 +937,7 @@
 				health: Math.max(1, Math.ceil((scene.number - zone.startScene) / 2.5) + (numberOfBosses * 5)),
 				maxHealth: 0,
 				strength: 1 + Math.floor(scene.number / 8),
-				exp: Math.ceil(scene.number / (level / 10)),
+				exp: Math.ceil(scene.number / (level / 5)),
 				gender: rint(2) + 1,
 				armor: 0,
 				dodge: 5,
@@ -5075,21 +5075,32 @@
 			}
 			
 			var zoneEffectScale = Math.floor(scene.number / 75);
+			
+			var nameSubjects = [];
+			var nameObjects = [];
+			var nameAdj = [];
+			var nameVerbs = [];
+
 			switch (r.type)
 			{
-				case 1:
-					r.name = 'Cave';
+				case 1: // cave
+					nameSubjects = ['burrow', 'cave', 'cavern', 'crater', 'den', 'gap', 'grotto', 'hole', 'hollow', 'pit', 'tunnel'];
+					nameAdj = ['burrowing', 'dark', 'deep', 'digging', 'falling'];
+					nameObjects = ['boulder', 'crag', 'dark', 'gem', 'rock', 'slope', 'stone'];
+					nameVerbs = ['bore', 'burrow', 'crawl', 'delve', 'dig'];
+					r.name = '';
+
 					r.zoneEffects.swarm = zoneEffectScale;
 					r.zoneEffects.strongEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.fastEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.earthPenalty = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.airPenalty = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' a natural underground hollow.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a dark stone cavern.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a dank cave.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a humid cavern.'];
-					r.exit = ['You leave the underground caverns.', 'You exit the dark cave.', 'You leave the humid darkness of the cavern.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, a natural underground hollow.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, a dark stone cavern.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, a dank cave.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, a humid cavern.'];
+					r.exit = ['You leave the underground caverns of <<name>>.', 'You exit <<name>>.', 'You leave the humid darkness of <<name>>.'];
 					r.features.push('The walls and ceiling are earth and stone.', 'It smells of fungus.', 'It has a musky odor.', 'You hear a faint dripping sound.');
 					r.resolutions.push('The smell of fungus lingers on your body.', 'You are relieved to be out of those cramped quarters.', 'You are glad to be out of those stuffy crevices.');
-					r.sceneNames.start = ['Cave Entrance', 'Mouth of the Cave', 'Cave Opening', 'Cavern Entrance', 'Mouth of the Cavern'];
+					r.sceneNames.start = ['Entrance to <<name>>', 'Mouth of <<name>>', 'Opening to <<name>>', '<<name>> Entrance'];
 					r.sceneNames.normal.push('a moldy corridor', 'a moss covered chamber', 'a narrow crevice', 'an open cavern', 'a chamber full of sleeping bats', 'a fungus-filled chamber', 'a dank cavern', 'a deep chasm');
 					r.sceneNames.boss = ['Large Stalactite-filled Cavern', 'Large Stalagmite-filled Cavern', 'Brooding Nest', 'Fungus Farm'];
 					r.attacks.push('lunges from a small crevice', 'emerges from a dark hole', 'drops from a ledge');
@@ -5099,19 +5110,24 @@
 							'wormCave', 'wyvern']);
 					r.addEnemyTypes(enemyCohorts.greenies.types);
 					break;
-				case 2:
-					r.name = 'Temple';
+				case 2: // temple
+					nameSubjects = ['cathedral', 'chapel', 'church', 'pagoda', 'sanctuary', 'shrine', 'temple'];
+					nameAdj = ['damned', 'divine', 'hallow', 'holy', 'pagan', 'vile', 'wicked'];
+					nameObjects = ['altar', 'grace', 'heresy', 'prayer', 'rite', 'sin', 'worship'];
+					nameVerbs = ['chant', 'hallow', 'pray', 'preach'];
+					r.name = '';
+
 					r.zoneEffects.blessedEnemies = zoneEffectScale;
 					r.zoneEffects.traps = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.fastEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.firePenalty = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.luckPenalty = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' an ornate temple.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a large temple.', 'You ' + getRandomArrayValue(entranceVerbs) + ' the temple.'];
-					r.exit = ['You leave the temple.', 'You exit the temple.', 'You leave the cursed temple.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' the ornate <<name>>.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>.'];
+					r.exit = ['You leave <<name>>.', 'You exit <<name>>.', 'You leave the cursed <<name>>.'];
 					r.features.push('It is decorated with crumbling statues and torn tapestries.', 'It looks as though it has been ransacked.', 'It is in shambles and disrepair.', 'It feels cursed.');
 					r.resolutions.push('It is now cleansed of evil.', 'You feel a curse has been lifted from you.');
-					r.sceneNames.start = ['Temple Door', 'Temple Steps', 'Gates of the Temple', 'Temple Entrance', 'Temple Gates'];
+					r.sceneNames.start = ['<<name>> Door', '<<name>> Steps', 'Gates of <<name>>', '<<name>> Entrance', '<<name>> Gates'];
 					r.sceneNames.normal.push('a large hallway', 'an ornate chapel', 'an altar room', 'some sleeping quarters', 'the priest\'s quarters', 'a banquet hall', 'a decorated hallway', 'an ornate chamber');
 					r.sceneNames.boss = ['Huge Altar Room', 'Sinister Basement', 'Grand Meeting Room'];
 					r.attacks.push('emerges from behind a large effigy', 'is standing in front of an altar', 'drops from a balcony', 'crashes through a stained glass window');
@@ -5120,19 +5136,24 @@
 							'humanGuardian', 'humanPaladin', 'humanInquisitor', 'humanZealot', 'spriteFire',
 							'viper']);
 					break;
-				case 3:
-					r.name = 'Castle';
+				case 3: // castle
+					nameSubjects = ['bulwark', 'castle', 'citadel', 'fort', 'fortess', 'hold', 'keep', 'stronghold'];
+					nameAdj = ['gold', 'green', 'grey', 'ivy', 'mount', 'red', 'safe'];
+					nameObjects = ['dragon', 'gard', 'gate', 'guard', 'harbor', 'hill', 'moat', 'shield', 'stone', 'tower', 'ward'];
+					nameVerbs = ['cover', 'save', 'stand', 'watch'];
+					r.name = '';
+					
 					r.zoneEffects.traps = zoneEffectScale;
 					r.zoneEffects.fastEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.toughEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.strongEnemies = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.airPenalty = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' an old stonework keep.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a crumbling castle.', 'You ' + getRandomArrayValue(entranceVerbs) + ' an ancient fortress.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a venerable stronghold.'];
-					r.exit = ['You leave the dilapidated castle.', 'You exit the old dusty stronghold.', 'You leave the ancient keep.', 'You exit the forgotten fortress.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, an old stonework structure.', 'You ' + getRandomArrayValue(entranceVerbs) + ' the crumbling <<name>>.', 'You ' + getRandomArrayValue(entranceVerbs) + ' the ancient <<name>>.', 'You ' + getRandomArrayValue(entranceVerbs) + ' the venerable <<name>>.'];
+					r.exit = ['You leave the dilapidated <<name>>.', 'You exit the old dusty <<name>>.', 'You leave the ancient <<name>>.', 'You exit the forgotten <<name>>.'];
 					r.features.push('Rubble is scattered across the floor.', 'The ceiling feels like it will collapse at any moment.', 'The walls look like they are about to fall.');
 					r.resolutions.push('The structure crumbles to the ground behind you.', 'You leave quickly, before the building collapses.');
-					r.sceneNames.start = ['Fortress Gates', 'Castle Drawbridge', 'Stronghold Gates', 'Keep Entrance', 'Castle Portcullis', 'Keep Entrance'];
+					r.sceneNames.start = ['<<name>> Gates', '<<name>> Drawbridge', '<<name>> Entrance', '<<name>> Portcullis'];
 					r.sceneNames.normal.push('the castle parapets', 'a tower staircase', 'some soldier barracks', 'the captain\'s quarters', 'a banquet hall', 'a decorated hallway', 'an ornate chamber', 'a large library',
 											'a disfunctional smithy', 'an abandoned armory');
 					r.sceneNames.boss = ['Large Ornate Throne Room', 'Cold Basement Prison', 'The Lord\'s Chamber', 'Ornate Trophy Room'];
@@ -5142,19 +5163,24 @@
 							'humanRogue', 'humanServant', 'humanSoldier', 'humanSquire', 'humanThief', 'humanWizard',
 							'orc', 'spriteWater', 'giantStorm']);
 					break;
-				case 4:
-					r.name = 'Crypt';
+				case 4: // crypt
+					nameSubjects = ['catacomb', 'crypt', 'tomb'];
+					nameAdj = ['bitter', 'bleak', 'cold', 'dark', 'grim', 'icy', 'somber'];
+					nameObjects = ['coffin', 'corpse', 'death', 'ghost', 'grave', 'scourge', 'shroud', 'spirit', 'veil'];
+					nameVerbs = ['bury', 'chill', 'plague', 'rest', 'sleep', 'wisp'];
+					r.name = '';
+					
 					r.zoneEffects.waterPenalty = zoneEffectScale;
 					r.zoneEffects.ravage = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.spoil = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.toxicEnemies = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.toxin = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' an ancient catacomb.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a dark dusty crypt.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a dank tomb.'];
-					r.exit = ['You dash through the catacomb exit.', 'You quickly leave the spooky crypt.', 'You hurry from the creepy tomb.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' the ancient <<name>>.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>.'];
+					r.exit = ['You dash through the <<name>> exit.', 'You quickly leave <<name>>.', 'You hurry from <<name>>.'];
 					r.features.push('The smell of death and upturned earth fills the air.', 'An aura of death sends chills down your spine.', 'A chilling wind cuts you to your core.');
 					r.resolutions.push('You will never forget this frightning experience.', 'You fear the nightmares you\'ll have tonight.');
-					r.sceneNames.start = ['Crypt Gates', 'Gates to the Catacombs', 'Tomb Entrance'];
+					r.sceneNames.start = ['<<name>> Gates', 'Gates to <<name>>', '<<name>> Entrance'];
 					r.sceneNames.normal.push('a broken mausoleum', 'a spooky chamber', 'a coffin-filled chamber', 'a small shrine', 'a large shrine', 'a dusty, creepy chamber');
 					r.sceneNames.boss = ['Embalming Laboratory', 'Mass Grave', 'Altar of Death'];
 					r.attacks.push('rises from a grave', 'emerges from a hole in the wall', 'sits atop a pile of upturned earth');
@@ -5163,19 +5189,24 @@
 					r.addEnemyTypes(enemyCohorts.ghosts.types);
 					r.addEnemyTypes(enemyCohorts.undead.types);
 					break;
-				case 5:
-					r.name = 'Labyrinth';
+				case 5: // labyrinth
+					nameSubjects = ['enigma', 'labyrinth', 'maze', 'tangle'];
+					nameAdj = ['coiled', 'dazed', 'lost', 'twisted'];
+					nameObjects = ['bend', 'curse', 'crux', 'hex', 'knot', 'spiral'];
+					nameVerbs = ['baffle', 'coil', 'daze', 'twist'];
+					r.name = '';
+					
 					r.zoneEffects.lost = zoneEffectScale;
 					r.zoneEffects.traps = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.fastEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.toughEnemies = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.strongEnemies = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' an old labyrinth.', 'You ' + getRandomArrayValue(entranceVerbs) + ' a bundle of intertwined cooridors.', 'You ' + getRandomArrayValue(entranceVerbs) + ' an intricate maze.'];
-					r.exit = ['You emerge from the labyrinth.', 'You finally finish the maze.', 'You solve the puzzle and leave the area.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>.', 'You ' + getRandomArrayValue(entranceVerbs) + ' <<name>>, a bundle of intertwined cooridors.', 'You ' + getRandomArrayValue(entranceVerbs) + ' the intricate <<name>>.'];
+					r.exit = ['You emerge from <<name>>.', 'You finally finish <<name>>.', 'You solve the puzzle and leave <<name>>.'];
 					r.features.push('A feeling of anxiety permiates you.', 'The walls, ceiling and floor all look the same.', 'It\'s hard to tell which way to go.');
 					r.resolutions.push('You are glad to be free from the confusing maze.', 'A feeling of relief overwhelms you as you are free from the labyrinth.');
-					r.sceneNames.start = ['Labyrinth Entrance', 'Entrance to the Labyrinth', 'Entrance to the Maze', 'Maze Entrance'];
+					r.sceneNames.start = ['<<name>> Entrance', 'Entrance to <<name>>'];
 					r.sceneNames.normal.push('a forking path', 'a room of mirrors', 'a room with 3 doors', 'a familiar looking chamber', 'a room full of staircases leading in different directions', 'a chamber with confusing architecture');
 					r.sceneNames.boss = ['Final Maze Room', 'End of the Labyrinth', 'Final Labyrinth Chamber'];
 					r.attacks.push('turns a corner', 'comes from behind', 'clammers down a staircase');
@@ -5183,19 +5214,24 @@
 							'basilisk', 'cyclops', 'denizenMaze', 'dragonClockwork', 'gorgon', 'gryphon',
 							'horrorLabyrinth', 'humanWizard', 'hydra', 'livingWall', 'minitaur', 'pegasus']);
 					break;
-				case 6:
-					r.name = 'Pyramid';
+				case 6: // pyramid
+					nameSubjects = ['monolith', 'obelisk', 'pyramid'];
+					nameAdj = ['grand', 'great', 'high', 'noble', 'royal'];
+					nameObjects = ['apex', 'jackel', 'king', 'mummy', 'point', 'queen', 'sand', 'tomb'];
+					nameVerbs = ['curse', 'hex', 'jinx', 'whip'];
+					r.name = '';
+
 					r.zoneEffects.cursedGrounds = zoneEffectScale;
 					r.zoneEffects.traps = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.toughEnemies = Math.floor(zoneEffectScale / 2);
 					r.zoneEffects.fastEnemies = Math.floor(zoneEffectScale / 3);
 					r.zoneEffects.strongEnemies = Math.floor(zoneEffectScale / 3);
 
-					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' the ' + getRandomArrayValue(['giant', 'ancient', 'venerable']) + ' ' + getRandomArrayValue(['pyramid', 'monolith', 'obelisk']) + '.'];
-					r.exit = ['You ' + getRandomArrayValue(['', 'finally']) + ' ' + getRandomArrayValue(leaveVerbs) + ' the ' + getRandomArrayValue(['giant', 'ancient', 'venerable']) + ' ' + getRandomArrayValue(['pyramid', 'monolith', 'obelisk']) + '.'];
+					r.enter = ['You ' + getRandomArrayValue(entranceVerbs) + ' the ' + getRandomArrayValue(['giant', 'ancient', 'venerable']) + ' <<name>>.'];
+					r.exit = ['You ' + getRandomArrayValue(['', 'finally']) + ' ' + getRandomArrayValue(leaveVerbs) + ' the ' + getRandomArrayValue(['giant', 'ancient', 'venerable']) + ' <<name>>.'];
 					r.features.push('You feel uneasy.', 'The size and age of it is daunting.', 'You feel an ancient evil within.');
 					r.resolutions.push('You are glad to be free from the confusing maze.', 'A feeling of relief overwhelms you as you are free from the labyrinth.');
-					r.sceneNames.start = ['Pyramid Entrance', 'Entrance to the Pyramid', 'Entrance to the Obelisk', 'Obelisk Entrance'];
+					r.sceneNames.start = ['<<name>> Entrance', 'Entrance to <<name>>'];
 					r.sceneNames.normal.push('a servant\'s tomb', 'a room full of sarcophagi', 'a decending shaft', 'an ascending shaft', 'stairs leading upward', 'stairs leading downward', 'a large open chamber full of clay pots', 'an unmarked tomb');
 					r.sceneNames.boss = ['The King\s Chamber', 'The Queen\s Chamber', 'The Pharaoh\s Chamber', 'The King\s Tomb', 'The Queen\s Tomb', 'The Pharaoh\s Tomb'];
 					r.attacks.push('bursts out of a sarcophagus', 'reveals itself from a large clay pot', 'hurries through the corridor', 'drops from above');
@@ -5281,6 +5317,27 @@
 							'humanWizardNecro', 'lich', 'mosquito', 'mummy', 'scarecrow', 'skeleton', 'spider', 'spriteForest', 'vampire', 'zombie'];
 					r.addEnemyTypes(enemyCohorts.ghosts.types)
 					break;
+			}
+			
+			if (r.name == '')
+			{
+				var subject = ucaseName(getRandomArrayValue(nameSubjects));
+				var adj = getRandomArrayValue(nameAdj);
+				var object = getRandomArrayValue(nameObjects);
+				var verb = getRandomArrayValue(nameVerbs);
+				var nameType = rint(3);
+				switch (nameType)
+				{
+					case 0:
+						r.name = ucaseName(adj) + '-' + object + ' ' + subject;
+						break;
+					case 1:
+						r.name = ucaseName(object) + '-' + verb + ' ' + subject;
+						break;
+					case 2:
+						r.name = ucaseName(verb) + '-' + object + ' ' + subject;
+						break;
+				}
 			}
 
 			if (((isWinterEvent) && (r.type != 7))
@@ -5386,7 +5443,7 @@
 				{
 					if (r.number > startScene + 2)
 					{
-						eventText += '<p>' + getRandomArrayValue(zone.exit) + ' ' + getRandomArrayValue(zone.resolutions) + '</p>';
+						eventText += '<p>' + getRandomArrayValue(zone.exit).replace('<<name>>', zone.name) + ' ' + getRandomArrayValue(zone.resolutions) + '</p>';
 						if (candy > 0)
 						{
 							var candyBonus = (candy / 2) * (candy + 1);
@@ -5402,7 +5459,7 @@
 						setgameBoxZone(zone.type);
 					}
 					r.name = getRandomSceneName('');
-					eventText += '<p>' + getRandomArrayValue(zone.enter) + ' ' + getRandomArrayValue(zone.features) + ' ' + getRandomArrayValue(areaStarts) + ' ' + r.name + '.</p>';
+					eventText += '<p>' + getRandomArrayValue(zone.enter).replace('<<name>>', zone.name) + ' ' + getRandomArrayValue(zone.features) + ' ' + getRandomArrayValue(areaStarts) + ' ' + r.name + '.</p>';
 					wounds = 0;
 					fatigue = 0;
 				}
@@ -10195,7 +10252,7 @@
 		{
 			if (type == 'start')
 			{
-				return getRandomArrayValue(zone.sceneNames.start);
+				return getRandomArrayValue(zone.sceneNames.start).replace('<<name>>', zone.name);
 			}
 			else if (type == 'boss')
 			{
